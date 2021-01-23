@@ -56,3 +56,5 @@ int main(){
 
     int value = interpolation_search(array, 42, size, true);
 }
+
+//TODO: conferir que esta funcionando do jeito desejado
