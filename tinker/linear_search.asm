@@ -24,7 +24,7 @@
 	lw $s2, key
 	lw $s7, error_signal
 	
-	for:
+for:
 	
 	# t0: variavel de testes
 	# t1: a[i]
@@ -56,14 +56,14 @@
 	
 	j for                               # retorna para label "for"
 	
-	return_index:
+return_index:
 	
 	subi $t3, $s0, 1                    # decrementa i para retornar indice correto
 	add $s7, $0, $t3                    # escreve sobre sinal de retorno
 	 
 	j done
 	
-	done:
+done:
 					    # imprime indice de chave se estiver no vetor
 					    #e sinal de erro (-1) se nao.#
 	li $v0, 1			    #escreve no registrador do sistema o tipo de chamada
