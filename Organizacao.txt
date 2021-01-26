@@ -1,0 +1,15 @@
+Separação por blocos.
+
+Separar a função da main. (colocar os labels e usar jal)
+Blocos pensados:
+
+Na função:
+1.Iniciar variáveis lo, hi e pos(com o cálculo feito).
+2.Condições de parada. São os três primeiros if's do while e o proprio while
+3.loop atualizando lo e hi. São os dois últimos if's.
+4. entrada e saida do trecho da funcao. Dizer quem são os argumentos e em que registradores estão.
+
+Na main:
+1.iniciar o array, a key, o tamanho do vetor e o sinal de erro. Tanto no .data qto na main
+2.Chamar a função, preparar os argumentos e o buscar o resultado.
+3.Chamar o sistema para imprimir
