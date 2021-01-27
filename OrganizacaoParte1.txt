@@ -15,3 +15,5 @@ Primeiro, escrever os blocos principais para ter como referência na hora de mon
 5.Uso de arrays
   -alocação
   -indexação
+
+Depois, juntar tudo no programa principal.
