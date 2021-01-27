@@ -34,7 +34,6 @@ for:
 	##condicoes de parada##
 	#######################
 	
-	#sao os tres primeiros if's do while#
 	
 	slt $t0, $s0, $s1                   # se chegou ao fim do array:
 	beqz $t0, done                      # se (i < tamanho) == 0 (falso) , escapar
@@ -47,7 +46,6 @@ for:
 	##iteracao por vetor##
 	######################
 	
-	#e o ultimo if then else do while#
 	
 	sll $t2, $s0, 2                     # cria endereço
 	lw $t1, array($t2)                  # t1 = a[i]
