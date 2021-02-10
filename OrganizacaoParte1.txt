@@ -1,0 +1,19 @@
+Primeiro, escrever os blocos principais para ter como referência na hora de montar o código principal.
+
+1.Multiplicação e divisão de ponto flutuante
+
+2.Chamda e retorno de função
+  -função recursiva
+  
+3.Códigos para decisão(if else)
+  -comparação e branching
+ 
+4.Chamadas do sistema (syscall)
+  -ler os dados do usuário
+  -escrever na tela
+  
+5.Uso de arrays
+  -alocação
+  -indexação
+
+Depois, juntar tudo no programa principal.
