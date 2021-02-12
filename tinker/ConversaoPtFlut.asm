@@ -1,4 +1,4 @@
-#Código para ver como o processador converte os números, para ver o que entra no
+#CÃ³digo para ver como o processador converte os nÃºmeros, para ver o que entra no
 #coprocessador1 e o que sai se quiser recuperar
 
 	.data
@@ -12,10 +12,10 @@
 	
 	.text
 main:
-#$f12 é um registrador do cop1 usado para imprimir na syscall.
-# Todas as operações foram feitas em cima dele
+#$f12 Ã© um registrador do cop1 usado para imprimir na syscall.
+# Todas as operaÃ§Ãµes foram feitas em cima dele
 ###########trecho para colocar no coprocessador1
-	li $t0 8		#número arbitrário em $t0
+	li $t0 8		#nÃºmero arbitrÃ¡rio em $t0
 #imprime antes de ir para o cop1
 	li $v0, 4		#codigo imprime string
 	la $a0, antesdocop1	#armazena string a imprimir
@@ -39,13 +39,13 @@ main:
 	syscall
 ##########trecho para recuperar do coprocessador1
 	l.d $f12, num		# $f12 = num = 7.77
-#imprimir o número do jeito que ele chegou
+#imprimir o nÃºmero do jeito que ele chegou
 	li $v0, 4		#codigo imprime string
 	la $a0, dtoint0		#armazena string a imprimir
 	syscall
 	li $v0, 3		#codigo imprime double $f12
 	syscall	
-#imprimir depois da conversão, ainda no cop1
+#imprimir depois da conversÃ£o, ainda no cop1
 	cvt.w.d $f12, $f12	#converter de double para word/inteiro
 	li $v0, 4		#codigo imprime string
 	la $a0, dtoint1		#armazena string a imprimir
@@ -54,7 +54,7 @@ main:
 	syscall
 #imprimir depois de voltar pro processador principal
 	mfc1.d $t0, $f12	#move $f12 para $t0, tirando do cop1
-				#atencao que este comando enche $t1 de lixo, não só seta $t0
+				#atencao que este comando enche $t1 de lixo, nÃ£o sÃ³ seta $t0
 	li $v0, 4		#codigo imprime string
 	la $a0, dtoint2		#armazena string a imprimir
 	syscall
@@ -62,5 +62,5 @@ main:
 	li $v0, 1		#codigo imprime inteiro
 	syscall 
 #finalizando
-      li   $v0, 10          # código de finalização
+      li   $v0, 10          # cÃ³digo de finalizaÃ§Ã£o
       syscall               # fechou o programa
