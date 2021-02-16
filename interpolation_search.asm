@@ -45,21 +45,21 @@
 	cvt.d.w $t4, $t4		#indice inicial
 	
 	
-	# define nova posicao
+	# define nova posicao		# pos = lo + (hi-lo)*(x-arr[lo])/(arr[hi]-arr[lo])
 	
 	sub.d $t5, $t3, $t4		# hi - lo 		
 	sub.d $t6, $t1, $t2		# arr[hi]-arr[lo] 
 	sub.d $t7, $t0, $t2		# x - arr[lo]
+	mul.d $t5, $t5, $t7		
+	div.d $t6, $t5, $t6		# $t6 = (hi-lo)*(x-arr[lo])/(arr[hi]-arr[lo])
+	add.d $t5, $t6, $t4		# $t5 = pos	
+	cvt.w.d $t5, $t5
 	
 	
 	
 	
 	
-	# define nova posicao
 	
-	sub $t7, $t7, $t6 # 
-	addi $t6, $0, 2
-	div $t7, $t6
 	mflo $t3 # carrega endereco nominal de posicao
 	sll $t3, $t3, 2 # converte endereco de posicao para enderecamento de palavra
 	
