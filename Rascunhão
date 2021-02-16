@@ -1,0 +1,49 @@
+main:
+      recebe array, n° de elementos da array, tamanho de cada elemento e endereço base;
+      armazena base e tamanho na memória
+      n = n° de elementod de array
+      &inicial = &base
+      &final = &base + (n * tamanho de cada elemento)
+      x declarado //número desejado 
+      jal: chama interpolation com três argumentos (&final, &inicial, x)
+      compara (index e -1); caso iguals, pula para linha 10
+      print mensagem de correta + index
+      pula para linha 11
+      print mensagem errada
+      finaliza programa
+      
+      
+     
+interpolation (&inicial, &final, x): 
+              if (&inicio => &final), pula para index = -1 (linha 42)
+              if (x<low),  pula para index = -1 (linha 42)
+              if (x>high),  pula para index = -1] (linha 42)
+              lo = (&inicial - &base)/tamanho do elemento;                        //low é menor indice da array
+              hi = (&fim - &base)/tamanho do elemento                           //high é maior indice da array
+              array [lo] = inteiro em &inicial                                  // array[lo] é menor número da array
+              array[hi] = inteiro em &final                                     //array[hi] é maior número da array
+              converter (lo, hi, array[lo], array[hi], x) para double
+                  t0 = hi - lo
+                  t1 = array[hi]-array[lo]
+                  t2 = x - array[lo]
+                  t3 = t0*t2
+                  t4 = t3/t1
+              converter (t4) em inteiro                                         //int(t4)
+              &pos =  &base + int(t4) * tamanho do elemento
+              ler inteiro em &pos                                               //int_em(&pos)
+              if (x!=int_em(&pos)) pular para linha 37
+                index = pos
+                retornar
+              if (int_em(&pos) < x) pular para linha 40
+                &fim = &pos - tamanho de elemento 
+                chama interpolação (&inicial, &final, x)
+              &inicial = &pos + tamanho de elemento
+              chama interpolação (&inicial, &final, x) 
+              index = -1 
+              finaliza função e retorna 
+             
+                      
+            
+              
+              
+              
