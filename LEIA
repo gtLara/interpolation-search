@@ -1,0 +1,18 @@
+Registradores Importantes:
+
+$S0: Key (declarado)
+$S1: Endereço final da array
+$S2: Endereço inicial da array
+$S3: Tamanho da array (declarado)
+
+
+Argumentos
+$a0: Key
+$a1: Endereço final da sub-array
+$a2: Endereço inicial da sub-array
+
+Temporários (dentro da função interpolation)
+$t1: valor do último elemento da sub-array
+$t2: valor do primeiro elemento da sub-array
+$t3: endereço nominal do ultimo elemento da sub-array
+$t4: endereço nominal do primeiro elemento da sub-array
