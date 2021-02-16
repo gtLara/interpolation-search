@@ -12,6 +12,8 @@ $a1: Endereço final da sub-array
 $a2: Endereço inicial da sub-array
 
 Temporários (dentro da função interpolation)
+!!!Quando converter para float, respeitar endereçamento!!!
+$t0: key
 $t1: valor do último elemento da sub-array
 $t2: valor do primeiro elemento da sub-array
 $t3: endereço nominal do ultimo elemento da sub-array
