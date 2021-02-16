@@ -20,7 +20,7 @@ int interpolation_search(int array[], int key, int size, bool verbose){
         }
 
         int num = hi - low;
-        int inv_m = (hi - low)/(array[hi] - array[low]);
+        int inv_m = (double)(hi - low)/(array[hi] - array[low]);
         int inferior_diff = key - array[low];
 
         int pos = inv_m*(inferior_diff) + low; // Redefine posicao de acordo com o algoritmo de busca por interpolacao

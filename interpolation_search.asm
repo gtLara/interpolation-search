@@ -116,6 +116,4 @@
 	add $a0, $0, $s3
 	syscall 
 	
-	# CASOS FUNCIONAIS:
-	# - elemento buscado < menor elemento de array
-	# - elemento buscado > maior elemento de array
+	# TODO: implementar calculo de posicao
