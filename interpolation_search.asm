@@ -37,6 +37,13 @@
 	sub $t6, $s2, $a2
 	srl $t4, $t6, 2 # recupera endereco nominal de limite inferior !done
 	
+	# converte variaveis para double
+	
+	
+	
+	
+	
+	
 	# define nova posicao
 	
 	sub $t7, $t7, $t6 # 
