@@ -38,7 +38,18 @@
 	srl $t4, $t6, 2 # recupera endereco nominal de limite inferior !done
 	
 	# converte variaveis para double
+	cvt.d.w $t0, $a0		#key
+	cvt.d.w $t1, $t1		#valor final
+	cvt.d.w $t2, $t2		#valor inicial
+	cvt.d.w $t3, $t3		#indice final 
+	cvt.d.w $t4, $t4		#indice inicial
 	
+	
+	# define nova posicao
+	
+	sub.d $t5, $t3, $t4		# hi - lo 		
+	sub.d $t6, $t1, $t2		# arr[hi]-arr[lo] 
+	sub.d $t7, $t0, $t2		# x - arr[lo]
 	
 	
 	
