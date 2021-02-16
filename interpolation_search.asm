@@ -10,33 +10,32 @@
 	
 	# carrega argumentos
 	
-	add $t0, $0, $a0 # elemento buscado
-	add $t1, $0, $a1 # ultimo elemento de subarray
-	add $t2, $0, $a2 # primeiro elemento de subarray
+	lw $t1, ($a1) 	#ultimo elemento de subarray
+	lw $t2, ($a2)	#primeiro elemento de subarray
 	
 	# t7 e t6: variaveis factualmente temporarias
 	
-	# verificando condicoes
+	# verificando 3 condicoes
 	
 	# exaustao de busca
 	# 1: se endereco superior <= endereco inferior, escapar
-	sle $t7, $t2, $t1
+	sle $t7, $a2, $a1
 	beqz $t7, return_failure
 	# as duas condicoes seguintes decorrem do fato do array estar ordenado
 	# 2: se elemento buscado < primeiro elemento de subarray, escapar
-	lw $t7, array($t2) # carrega primeiro elemento de subarray
-	slt $t7, $t7, $t0
+	slt $t7, $t2, $a0
 	beqz $t7, return_failure
 	# 3: se elemento buscado > ultimo elemento de subarray, escapar
-	lw $t7, array($t1) # carrega ultimo elemento de subarray
-	slt $t7, $t0, $t7
+	slt $t7, $a0, $t1
 	beqz $t7, return_failure
 	
 	# estima nova posicao para elemento buscado assumindo distribuicao uniforme de array
 	
 	# converte enderecos por palavras para enderecamento nominal (4, 8, 12 -> 1, 2, 3)
-	srl $t7, $t1, 2 # recupera endereco nominal de limite superior
-	srl $t6, $t2, 2 # recupera endereco nominal de limite inferior
+	sub $t6, $s1, $a2
+	srl $t3, $t6, 2  # recupera endereco nominal de limite superior
+	sub $t6, $s2, $a2
+	srl $t4, $t6, 2 # recupera endereco nominal de limite inferior !done
 	
 	# define nova posicao
 	
@@ -94,17 +93,18 @@
 	
 	#addi, $s0, $0, 1 # s0 = elemento buscado
 	lw $s0, key
-	addi $s1, $0, 7 # s1 = tamanho de array - 1
+	addi $s3, $0, 7 # s1 = tamanho de array - 1
 	
-	# cria endereco da ultima posicao de array
+	# cria enderecos das posicoes de array
+	la $s2, array # s2 = endereço da primeira posicao
+	sll $t2, $s3, 2
+	add $s1, $s2, $t2 # s1 = endereco de ultima posicao 
 	
-	sll $s2, $s1, 2 # s2 = endereco de ultima posicao
 	
 	# carrega argumentos para interpolation_search
-	
 	add $a0, $0, $s0 # elemento buscado
-	add $a1, $0, $s2 # ultimo endereco
-	add $a2, $0, $0  # primeiro endereco (inicialmente = 0)
+	add $a1, $0, $s1 # ultimo endereco
+	add $a2, $0, $s2  # primeiro endereco (inicialmente = 0)
 	
 	jal interpolation_search
 	
