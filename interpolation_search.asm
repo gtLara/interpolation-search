@@ -35,7 +35,7 @@
 	sub $t6, $s1, $a2
 	srl $t3, $t6, 2  # recupera endereco nominal de limite superior
 	sub $t6, $s2, $a2
-	srl $t4, $t6, 2 # recupera endereco nominal de limite inferior !done
+	srl $t4, $t6, 2 # recupera endereco nominal de limite inferior 
 	
 	# converte variaveis para double
 	cvt.d.w $t0, $a0		#key
@@ -55,7 +55,7 @@
 	add.d $t5, $t6, $t4		# $t5 = pos	
 	cvt.w.d $t5, $t5
 	
-	
+	#//////////////////Vim até aqui(ass. Bahia)/////////////////////////////////#
 	
 	
 	
