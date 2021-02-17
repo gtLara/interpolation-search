@@ -9,7 +9,9 @@
 	interpolation_search:
 	
 	# carrega argumentos
-	
+	##
+	#(GPG)fale por favor quem sao os argumentos (o que cada registrador representa) $a0, $a1 e $a2
+	##
 	lw $t1, ($a1) 	#ultimo elemento de subarray
 	lw $t2, ($a2)	#primeiro elemento de subarray
 	
@@ -32,30 +34,72 @@
 	# estima nova posicao para elemento buscado assumindo distribuicao uniforme de array
 	
 	# converte enderecos por palavras para enderecamento nominal (4, 8, 12 -> 1, 2, 3)
+	##
+	#(GPG)$s1 e $s2 têm guardado o quê?
+	##
 	sub $t6, $s1, $a2
 	srl $t3, $t6, 2  # recupera endereco nominal de limite superior
 	sub $t6, $s2, $a2
 	srl $t4, $t6, 2 # recupera endereco nominal de limite inferior 
 	
+	##
+	#(GPG) essa parte que transformei em comentário deve ser retirada 
+	##
 	# converte variaveis para double
-	cvt.d.w $t0, $a0		#key
-	cvt.d.w $t1, $t1		#valor final
-	cvt.d.w $t2, $t2		#valor inicial
-	cvt.d.w $t3, $t3		#indice final 
-	cvt.d.w $t4, $t4		#indice inicial
-	
+	#cvt.d.w $t0, $a0		#key
+	#cvt.d.w $t1, $t1		#valor final
+	#cvt.d.w $t2, $t2		#valor inicial
+	#cvt.d.w $t3, $t3		#indice final 
+	#cvt.d.w $t4, $t4		#indice inicial
 	
 	# define nova posicao		# pos = lo + (hi-lo)*(x-arr[lo])/(arr[hi]-arr[lo])
 	
-	sub.d $t5, $t3, $t4		# hi - lo 		
-	sub.d $t6, $t1, $t2		# arr[hi]-arr[lo] 
-	sub.d $t7, $t0, $t2		# x - arr[lo]
-	mul.d $t5, $t5, $t7		
-	div.d $t6, $t5, $t6		# $t6 = (hi-lo)*(x-arr[lo])/(arr[hi]-arr[lo])
-	add.d $t5, $t6, $t4		# $t5 = pos	
-	cvt.w.d $t5, $t5
+	#sub.d $t5, $t3, $t4		# hi - lo 		
+	#sub.d $t6, $t1, $t2		# arr[hi]-arr[lo] 
+	#sub.d $t7, $t0, $t2		# x - arr[lo]
+	#mul.d $t5, $t5, $t7		
+	#div.d $t6, $t5, $t6		# $t6 = (hi-lo)*(x-arr[lo])/(arr[hi]-arr[lo])
+	#add.d $t5, $t6, $t4		# $t5 = pos	
+	#cvt.w.d $t5, $t5
 	
 	#//////////////////Vim até aqui(ass. Bahia)/////////////////////////////////#
+	###########################
+	#(GPG) mudança PFlut inicio
+	###########################
+	
+	# define nova posicao		# pos = lo + (hi-lo)*(x-arr[lo])/(arr[hi]-arr[lo])
+	#$a0 = key
+	#$t1 = arr[hi]
+	#$t2 = arr[lo]
+	#$t3 = hi 
+	#$t4 = lo	
+	sub $t5, $t3, $t4		#hi - lo
+	sub $t6, $t1, $t2		#arr[hi]-arr[lo]
+	sub $t7, $a0, $t2		# x - arr[lo]
+	
+	#passa para o CoProcessador1 e converte somente as variáveis que precisam de operação em PF
+	mtc1.d $t5, $f0			#$t5 em Cop1 no espaço para double
+	cvt.d.w $f0, $f0		#Convertido para double
+	mtc1.d $t6, $f2			#idem
+	cvt.d.w $f2, $f2		#
+	mtc1.d $t7, $f4			#
+	cvt.d.w $f4, $f4		#
+	
+	#faz as operações
+	div.d $f2, $f4, $f2		#$f2 = (x-arr[lo])/(arr[hi]-arr[lo]
+	mul.d $f0, $f0, $f2		#$f0 = (hi - lo)*$f2
+	
+	#converte e recupera o valor obtido
+	cvt.w.d $f0, $f0		#converte de double para inteiro
+	mfc1.d $t6, $f0			#move a parte inteira para $t6
+	
+	#nova posição
+	add $t5, $t6, $t4		#$t5 = pos = lo($t4) + [...]($t6)
+	
+	
+	########################
+	#(GPG) mudança PFlut Fim
+	########################
 	
 	
 	
