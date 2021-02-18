@@ -4,6 +4,7 @@
 	keyprompt: .asciiz "\nInsira o elemento a ser buscado:"
 	arrayprompt: .asciiz "\nPreencha vetor:"
 	newline: .asciiz "\n"
+	answer: .asciiz "\nEsta na posicao: "
 	
 .text
 	j main
@@ -248,6 +249,9 @@ main:
 	add $s3, $0, $v0 # recupera retorno
 	
 			# imprime sinal de retorno
+	li $v0, 4
+	la $a0, answer
+	syscall
 	
 	li $v0, 1
 	add $a0, $0, $s3
