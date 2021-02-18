@@ -1,8 +1,47 @@
 .data
-	array: .word 2 3 5 12 17 20 28 42
-	key: .word 17
+	array: .word 1 2 3 5 12 17 20 28 42
+	sizeprompt: .asciiz "\nInsira o tamanho do array:"
+	keyprompt: .asciiz "\nInsira o elemento a ser buscado:"
+	arrayprompt: .asciiz "\nPreencha vetor:"
+	newline: .asciiz "\n"
+	
 .text
 	j main
+	
+	# funcao para criar e preencher array
+	
+	create_array:
+	
+	# passa argumentos
+	
+	# a0: contador
+	# a1: tamanho do array
+	# a2: base
+
+	# pede para usuario preencher vetor
+	
+	create_array_loop:
+	
+	slt $t0, $a0, $a1 # verifica se preenchimento de array terminou
+	beqz $t0, create_array_return # se sim, retorna
+
+	sll $t0, $a0, 2 # cria endereço
+	add, $t0, $t0, $a2 # soma endereco a base
+	
+	#le valor de entrada
+	li $v0 , 5	 			
+	syscall
+	add $t1, $0, $v0
+
+	sw $t1, 0($t0) # carrega elemento inserido em posicao desejada
+
+	addi $a0, $a0, 1 # itera i
+	
+	j create_array_loop
+	
+	create_array_return:
+	
+	jr $ra
 	
 	# funcao principal de busca recursiva
 	
@@ -138,9 +177,51 @@
 	
 	main:
 	
-	#addi, $s0, $0, 1 # s0 = elemento buscado
-	lw $s0, key
-	addi $s1, $0, 7 # s1 = tamanho de array - 1
+	# interage com o usuario para criar array
+	
+	# demanda tamanho de array
+	
+	#imprime
+	li $v0 , 4		
+	la $a0 , sizeprompt 
+	syscall
+	#le
+	li $v0 , 5	 			
+	syscall
+	add $t0, $0, $v0
+	
+	# demanda elemento de busca
+	
+	li $v0 , 4		
+	la $a0 , keyprompt 
+	syscall
+	li $v0 , 5	 			
+	syscall
+	add $t1, $0, $v0
+	
+	# demanda preenchimento de array
+	
+	li $v0 , 4		
+	la $a0 , arrayprompt 
+	syscall
+	
+	# carrega informacoes inseridas e variaveis necessarias
+
+	addi $s0, $s0, 0 	# iterator
+	add $s1, $0, $t0	# size
+	add $s2, $0, $t1	# key
+
+	lui $s4, 0x1000
+	ori $s4, $s4, 0x0128 # define endereço inicial para array
+
+	add $a0, $0, $s0 # carrega argumentos para funcao create_array
+	add $a1, $0 ,$s1
+	add $a2, $0, $s4
+
+	jal create_array
+	
+	add, $s0, $0, $s2 # s0 = elemento buscado
+	subi $s1, $s1, 1 # s1 = tamanho de array - 1
 	
 	# cria endereco da ultima posicao de array
 	
@@ -162,4 +243,6 @@
 	add $a0, $0, $s3
 	syscall 
 	
-	# TODO: implementar calculo de posicao
+	# TODO: indexacao em array verdadeiro dentro de interpolation search. no momento o codigo esta funcional
+	# mas a busca eh realizada no array declarado em .data. para certificar que esta funcionando, insira
+	# tamanho = 9 e a chave que desejar. a insercao do array nao importa ainda.
