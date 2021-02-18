@@ -1,5 +1,5 @@
 .data
-	array: .word 1 2 3 5 12 17 20 28 42
+
 	sizeprompt: .asciiz "\nInsira o tamanho do array:"
 	keyprompt: .asciiz "\nInsira o elemento a ser buscado:"
 	arrayprompt: .asciiz "\nPreencha vetor:"
@@ -28,7 +28,7 @@
 	sll $t0, $a0, 2 # cria endereço
 	add, $t0, $t0, $a2 # soma endereco a base
 	
-	#le valor de entrada
+	# le valor de entrada
 	li $v0 , 5	 			
 	syscall
 	add $t1, $0, $v0
@@ -52,6 +52,7 @@
 	add $t0, $0, $a0 # elemento buscado
 	add $t1, $0, $a1 # endereco de ultimo elemento de subarray
 	add $t2, $0, $a2 # endereco de primeiro elemento de subarray
+	# a3: base do array. nao sera carregado em temporario e sim acessado diretamente em a3
 	
 	# t5, t7 e t6: variaveis factualmente temporarias
 	
@@ -66,21 +67,25 @@
 	# as duas condicoes seguintes decorrem do fato do array estar ordenado
 	# 2: se elemento buscado < primeiro elemento de subarray, escapar
 	
-	lw $t7, array($t2) # carrega primeiro elemento de subarray
+	add $t7, $a3, $t2 # cria endereco somando base de array a endereco desejado
+	lw $t7, 0($t7) # carrega primeiro elemento de subarray
 	sle $t7, $t7, $t0
 	beqz $t7, return_failure
 	
 	# 3: se elemento buscado > ultimo elemento de subarray, escapar
 	
-	lw $t7, array($t1) # carrega ultimo elemento de subarray
+	add $t7, $a3, $t1 # cria endereco somando base de array a endereco desejado
+	lw $t7, 0($t7) # carrega ultimo elemento de subarray
 	sle $t7, $t0, $t7
 	beqz $t7, return_failure
 	
 	# prepara para estimar nova posicao para elemento buscado assumindo distribuicao uniforme de array
 	# carrega variaveis importantes (lo, hi, arr[lo], arr[hi])
 	
-	lw $t3, array($t1)
-	lw $t4, array($t2)
+	add $t7, $a3, $t1 # cria endereco somando base de array a endereco desejado
+	lw $t3, 0($t7)
+	add $t7, $a3, $t2 # cria endereco somando base de array a endereco desejado
+	lw $t4, 0($t7)
 	srl $t1, $t1, 2 # carrega hi simplesmente convertendo enderecamento por palavra em enderecamento nominal (4, 8, 12 -> 1, 2, 3)
 	srl $t2, $t2, 2 # carrega lo da mesma maneira
 	
@@ -102,7 +107,7 @@
 	
 	sub $t5, $t1, $t2		# hi - lo
 	sub $t6, $t3, $t4		# arr[hi]-arr[lo]
-	sub $t7, $a0, $t4		# x - arr[lo]
+	sub $t7, $t0, $t4		# x - arr[lo]
 	
 	#passa para o CoProcessador1 e converte somente as variáveis que precisam de operação em PF
 	
@@ -132,7 +137,8 @@
 	
 	# verifica se o elemento buscado foi encontrado
 	
-	lw $t7, array($t3) # carrega valor de posicao estimada
+	add $t7, $a3, $t3 # cria endereco somando base de array a endereco desejado
+	lw $t7, 0($t7) # carrega valor de posicao estimada
 	sub $t6, $t0, $t7
 	beqz $t6, return_success
 	
@@ -145,9 +151,9 @@
 	
 	# carrega argumentos para proxima chamada de interpolation_search
 	
-	add $a0, $0, $t0 # elemento buscado se mantem
-	subi $a1, $t3, 4 # endereco superior assume pos - 1
-	add $a2, $0, $t2  # endereco inferior se mantem 
+	add $t0, $0, $t0 # elemento buscado se mantem
+	subi $t1, $t3, 4 # endereco superior assume pos - 1
+	add $t2, $0, $t2  # endereco inferior se mantem 
 	
 	# nao ha necessidade de salvar registrar PC em $ra por meio de jal porque o programa nunca voltara
 	# para esse ponto, e sim para o ponto em que a $ra registra nesse momento quando alguma das condicoes
@@ -159,9 +165,9 @@
 	
 	# carrega argumentos para proxima chamada de interpolation_search
 	
-	add $a0, $0, $t0 # elemento buscado se mantem
-	add $a1, $0, $t1 # endereco superior se mantem
-	addi $a2, $t3, 4  # endereco inferior assume pos + 1 
+	add $t0, $0, $t0 # elemento buscado se mantem
+	add $t1, $0, $t1 # endereco superior se mantem
+	addi $t2, $t3, 4  # endereco inferior assume pos + 1 
 	
 	j interpolation_search
 	
@@ -232,6 +238,7 @@
 	add $a0, $0, $s0 # elemento buscado
 	add $a1, $0, $s2 # ultimo endereco
 	add $a2, $0, $0  # primeiro endereco (inicialmente = 0)
+	add $a3, $0, $s4 # base de array
 	
 	jal interpolation_search
 	
@@ -241,8 +248,7 @@
 	
 	li $v0, 1
 	add $a0, $0, $s3
-	syscall 
+	syscall
 	
-	# TODO: indexacao em array verdadeiro dentro de interpolation search. no momento o codigo esta funcional
-	# mas a busca eh realizada no array declarado em .data. para certificar que esta funcionando, insira
-	# tamanho = 9 e a chave que desejar. a insercao do array nao importa ainda.
+	# TODO: depurar alguns casos esquisitos, como a busca por 2 em array [1 2 4]. esse caso resulta
+	# em um while infinito
