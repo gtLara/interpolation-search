@@ -1,8 +1,49 @@
 .data
-	array: .word 2 3 5 12 17 20 28 42
-	key: .word 17
+
+	sizeprompt: .asciiz "\nInsira o tamanho do array:"
+	keyprompt: .asciiz "\nInsira o elemento a ser buscado:"
+	arrayprompt: .asciiz "\nPreencha vetor:"
+	newline: .asciiz "\n"
+	
 .text
 	j main
+	
+	# funcao para criar e preencher array
+	
+	create_array:
+	
+	# passa argumentos
+	
+	# a0: contador
+	# a1: tamanho do array
+	# a2: base
+
+	# pede para usuario preencher vetor
+	
+	create_array_loop:
+	
+	slt $t0, $a0, $a1 # verifica se preenchimento de array terminou
+	beqz $t0, create_array_return # se sim, retorna
+
+	sll $t0, $a0, 2 # cria endereço
+	add, $t0, $t0, $a2 # soma endereco a base
+	
+	# le valor de entrada
+	li $v0 , 5	 			
+	syscall
+	add $t1, $0, $v0
+
+	sw $t1, 0($t0) # carrega elemento inserido em posicao desejada
+	#sll $t7, $a0, 1
+	#sw $t7, 0($t0) # carrega elemento inserido em posicao desejada
+
+	addi $a0, $a0, 1 # itera i
+	
+	j create_array_loop
+	
+	create_array_return:
+	
+	jr $ra
 	
 	# funcao principal de busca recursiva
 	
@@ -13,6 +54,7 @@
 	add $t0, $0, $a0 # elemento buscado
 	add $t1, $0, $a1 # endereco de ultimo elemento de subarray
 	add $t2, $0, $a2 # endereco de primeiro elemento de subarray
+	# a3: base do array. nao sera carregado em temporario e sim acessado diretamente em a3
 	
 	# t5, t7 e t6: variaveis factualmente temporarias
 	
@@ -27,21 +69,25 @@
 	# as duas condicoes seguintes decorrem do fato do array estar ordenado
 	# 2: se elemento buscado < primeiro elemento de subarray, escapar
 	
-	lw $t7, array($t2) # carrega primeiro elemento de subarray
+	add $t7, $a3, $t2 # cria endereco somando base de array a endereco desejado
+	lw $t7, 0($t7) # carrega primeiro elemento de subarray
 	sle $t7, $t7, $t0
 	beqz $t7, return_failure
 	
 	# 3: se elemento buscado > ultimo elemento de subarray, escapar
 	
-	lw $t7, array($t1) # carrega ultimo elemento de subarray
+	add $t7, $a3, $t1 # cria endereco somando base de array a endereco desejado
+	lw $t7, 0($t7) # carrega ultimo elemento de subarray
 	sle $t7, $t0, $t7
 	beqz $t7, return_failure
 	
 	# prepara para estimar nova posicao para elemento buscado assumindo distribuicao uniforme de array
 	# carrega variaveis importantes (lo, hi, arr[lo], arr[hi])
 	
-	lw $t3, array($t1)
-	lw $t4, array($t2)
+	add $t7, $a3, $t1 # cria endereco somando base de array a endereco desejado
+	lw $t3, 0($t7)
+	add $t7, $a3, $t2 # cria endereco somando base de array a endereco desejado
+	lw $t4, 0($t7)
 	srl $t1, $t1, 2 # carrega hi simplesmente convertendo enderecamento por palavra em enderecamento nominal (4, 8, 12 -> 1, 2, 3)
 	srl $t2, $t2, 2 # carrega lo da mesma maneira
 	
@@ -63,7 +109,7 @@
 	
 	sub $t5, $t1, $t2		# hi - lo
 	sub $t6, $t3, $t4		# arr[hi]-arr[lo]
-	sub $t7, $a0, $t4		# x - arr[lo]
+	sub $t7, $t0, $t4		# x - arr[lo]
 	
 	#passa para o CoProcessador1 e converte somente as variáveis que precisam de operação em PF
 	
@@ -93,7 +139,8 @@
 	
 	# verifica se o elemento buscado foi encontrado
 	
-	lw $t7, array($t3) # carrega valor de posicao estimada
+	add $t7, $a3, $t3 # cria endereco somando base de array a endereco desejado
+	lw $t7, 0($t7) # carrega valor de posicao estimada
 	sub $t6, $t0, $t7
 	beqz $t6, return_success
 	
@@ -138,9 +185,51 @@
 	
 	main:
 	
-	#addi, $s0, $0, 1 # s0 = elemento buscado
-	lw $s0, key
-	addi $s1, $0, 7 # s1 = tamanho de array - 1
+	# interage com o usuario para criar array
+	
+	# demanda tamanho de array
+	
+	#imprime
+	li $v0 , 4		
+	la $a0 , sizeprompt 
+	syscall
+	#le
+	li $v0 , 5	 			
+	syscall
+	add $t0, $0, $v0
+	
+	# demanda elemento de busca
+	
+	li $v0 , 4		
+	la $a0 , keyprompt 
+	syscall
+	li $v0 , 5	 			
+	syscall
+	add $t1, $0, $v0
+	
+	# demanda preenchimento de array
+	
+	li $v0 , 4		
+	la $a0 , arrayprompt 
+	syscall
+	
+	# carrega informacoes inseridas e variaveis necessarias
+
+	addi $s0, $s0, 0 	# iterator
+	add $s1, $0, $t0	# size
+	add $s2, $0, $t1	# key
+
+	lui $s4, 0x1000
+	ori $s4, $s4, 0x0128 # define endereço inicial para array
+
+	add $a0, $0, $s0 # carrega argumentos para funcao create_array
+	add $a1, $0 ,$s1
+	add $a2, $0, $s4
+
+	jal create_array
+	
+	add, $s0, $0, $s2 # s0 = elemento buscado
+	subi $s1, $s1, 1 # s1 = tamanho de array - 1
 	
 	# cria endereco da ultima posicao de array
 	
@@ -151,6 +240,7 @@
 	add $a0, $0, $s0 # elemento buscado
 	add $a1, $0, $s2 # ultimo endereco
 	add $a2, $0, $0  # primeiro endereco (inicialmente = 0)
+	add $a3, $0, $s4 # base de array
 	
 	jal interpolation_search
 	
@@ -160,6 +250,6 @@
 	
 	li $v0, 1
 	add $a0, $0, $s3
-	syscall 
+	syscall
 	
-	# TODO: implementar calculo de posicao
+	# TODO: comentar melhor, testar casos extremos
